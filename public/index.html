@@ -1,0 +1,77 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Authentication Example</title>
+</head>
+
+<body>
+    <h1>Socket.IO Authentication Example</h1>
+
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        const registerUser = async () => {
+            const username = 'Twinkle';
+            const email = 'twinkle@gmail.com';
+            const password = "12345678";
+
+            try {
+                const response = await axios.post('/auth/register', {
+                    username,
+                    email,
+                    password,
+                });
+                console.log(response.data.message);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+   
+        const loginUser = async () => {
+            const username = 'HayatsCodes';
+            const password = "123456";
+
+            try {
+                const response = await axios.post('/auth/login', {
+                    username,
+                    password,
+                });
+                const token = response.data.token;
+
+                connectToSocketIO(token);
+
+                console.log(response.data.message); // Login successful
+            } catch (error) {
+                console.error(error.response.data);
+            }
+        };
+
+        // Frontend code for connecting to Socket.IO server
+        const connectToSocketIO = (token) => {
+            const socket = io('http://localhost:3000', {
+                auth: {
+                    token,
+                },
+            });
+            socket.on('connect', () => {
+                console.log('Connected to Socket.IO server!');
+            });
+        };
+    </script>
+
+    <button onclick="registerUser()">Register User</button>
+    <button onclick="loginUser()">Login User</button>
+</body>
+
+</html> 
+
+
+
+
